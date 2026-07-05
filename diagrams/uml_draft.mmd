@@ -1,0 +1,43 @@
+classDiagram
+    class Owner {
+        +str name
+        +List~Pet~ pets
+    }
+
+    class Pet {
+        +str name
+        +int age
+        +str breed
+        +Owner owner
+        +List~Task~ tasks
+        +add_task(task: Task) None
+    }
+
+    class Task {
+        +str name
+        +int duration_minutes
+        +Priority priority
+        +bool completed
+        +str task_type
+    }
+
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    class Scheduler {
+        +List~Task~ tasks
+        +int available_minutes
+        +generate_plan(tasks: List~Task~, available_minutes: int) List~Task~
+        +sort_by_priority() List~Task~
+        +filter_by_time_budget() List~Task~
+        +explain_plan() str
+    }
+
+    Owner "1" *-- "0..*" Pet : has
+    Pet "1" *-- "0..*" Task : has
+    Scheduler "1" --> "0..*" Task : uses
+    Task --> Priority : has

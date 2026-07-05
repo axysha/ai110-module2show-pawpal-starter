@@ -1,6 +1,9 @@
 # PawPal+ Project Reflection
 
 ## 1. System Design
+Users should be able to add pet information (name, age, breed, etc) and owner information (name, occupancy,city/location)
+Users should be able to create and save a task like "Take Roxy on a walk ~ 30 minutes"
+Users should be able to see the overview(list based on priorities) of tasks on the home page. 
 
 **a. Initial design**
 
