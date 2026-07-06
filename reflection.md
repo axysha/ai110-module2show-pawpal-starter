@@ -9,12 +9,13 @@ Users should be able to see the overview(list based on priorities) of tasks on t
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+The initial design consists of four core classes — Owner, Pet, Task, and Scheduler — along with a Priority enum to constrain task urgency to LOW, MEDIUM, or HIGH. Owner holds a name and a list of associated Pet objects, while Pet stores identifying details (name, age, breed) along with a back-reference to its Owner and a list of Task objects it owns. Task is a lightweight data class capturing what needs to be done — name, duration, priority, completion status, and task type — with no behavior of its own. Scheduler is the only class with real logic: it takes a pool of tasks and a time budget, then sorts, filters, and assembles them into a daily plan while generating a plain-language explanation of its choices. The Owner–Pet and Pet–Task relationships are modeled as composition, since pets and tasks don't have independent existence outside their owner or pet, while Scheduler–Task is a simple association, since the scheduler operates on tasks without owning them. This structure keeps data (Owner, Pet, Task) and behavior (Scheduler) cleanly separated, following a single-responsibility principle per class.
 
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
-
+Yes, I slightly changed my design by avoiding ambiguity in the generate_plan() method by matching its setup to the other methods, like sort_by_priority() and filter_by_time_budget(). I'm also making an assumption in my design that a caller is responsible for keeping owner.pets and pet.owner in sync.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
