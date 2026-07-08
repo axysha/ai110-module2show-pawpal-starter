@@ -138,7 +138,11 @@ My overall confidence level for this system is 4.
 - **Recurring tasks**: `mark_complete()` (exercised in `main.py`) advances a daily/weekly
   task's due date to generate its next occurrence when completed.
 
-**Fenced code block of sample CLI output from running main.py**
+**Sample CLI output from running `main.py`:**
+
+```bash
+$ python main.py
+
 Daily plan for Buddy (Labrador):
 08:00 — Morning walk (30 min) [priority: high]
 skipped Evening walk — insufficient time remaining
@@ -162,5 +166,6 @@ Incomplete tasks for Buddy only:
   Evening walk
   Morning walk
   Grooming
+```
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
