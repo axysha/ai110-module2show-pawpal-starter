@@ -40,12 +40,13 @@ One trade off is that the scheduler always sorts strictly by priority first and 
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
+I used AI tools in all parts of developing this project. In the beginning, I used it for system design and brainstorming the object set-up for this app. Then I used it to help me build the UML diagrams. After I utilized different chats for developing, ui funcionality, testing, and other tasks. My most effective prompting techinque was to give a clear action and attach relevant context files for the best useful output. 
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
-
+One clear example was I asked Claude to make tests/test_pawpal.py import from pawpal_system.py, Claude decided to write an empty conftest.py at the project root as a safety net for the import path but I rejected that tool call and asked "what exactly is this for?" instead of accepting it.  I evaluated the suggestion by asking follow-up questions to make sure that the action was neccesary/releavnt to the task or not. 
 ---
 
 ## 4. Testing and Verification
@@ -54,11 +55,14 @@ One trade off is that the scheduler always sorts strictly by priority first and 
 
 - What behaviors did you test?
 - Why were these tests important?
+I tested the three core algorithms behind the scheduling system: chronological sorting of a day's plan, daily-task recurrence, and duplicate/overlapping time-slot detection. These matter because each one silently produces wrong output rather than crashing. I specifically verified the happy path for each (in-order results, next-day task creation, flagged overlaps) alongside edge cases like empty schedules, same start times, and duplicate bookings. 
+
 
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+I am overall confident that my scheduler works correctly and some edge cases I would like to test next time the weekly recurrence (due_date + 7 days, not 1), multi-day/multi-pet conflict detection across more than two schedules at once, and behavior when available_minutes is zero or negative in filter_by_time_budget
 
 ---
 
@@ -67,11 +71,14 @@ One trade off is that the scheduler always sorts strictly by priority first and 
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+The part of the project I felt most satisfied with was collaborating with Claude Code and getting to design this app through Python OOP principles
 
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
+I would try to scope the design of each class better and really figure the connections between the classes and what variables/methods each class needed for a specific features or functionalities. 
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+It's important to be clear and iterative when designing systems or working with AI. Providing AI with the proper context and updates helps the design transform from conception to real working code with functionality. It's also crucial to go over AI suggestions and use best human judgement before implementing a full design plan. 

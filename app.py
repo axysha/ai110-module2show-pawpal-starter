@@ -106,7 +106,7 @@ else:
 st.divider()
 
 st.subheader("Build Schedule")
-st.caption("Generate a prioritized daily plan for the selected pet's tasks.")
+st.caption("Generate a prioritized daily plan for every pet, sorted by start time.")
 
 available_minutes = st.number_input("Available minutes today", min_value=1, max_value=1440, value=120)
 
@@ -114,7 +114,53 @@ if st.button("Generate schedule"):
     if not owner.pets:
         st.warning("Add a pet and some tasks first.")
     else:
-        scheduler = Scheduler(selected_pet.tasks, available_minutes=int(available_minutes))
-        scheduler.generate_plan()
-        st.write(f"Daily plan for {selected_pet.name} ({selected_pet.breed}):")
-        st.text(scheduler.explain_plan())
+        schedulers_by_pet_name = {}
+
+        for pet in owner.pets:
+            scheduler = Scheduler(pet.tasks, available_minutes=int(available_minutes))
+            scheduler.generate_plan()
+            schedulers_by_pet_name[pet.name] = scheduler
+
+            st.markdown(f"#### {pet.name} ({pet.breed})")
+
+            sorted_plan = scheduler.sort_by_start_time()
+            if sorted_plan:
+                st.success(f"{len(sorted_plan)} task(s) scheduled for {pet.name}.")
+                st.table(
+                    [
+                        {
+                            "start_time": st_task.start_time,
+                            "task": st_task.task.name,
+                            "duration_minutes": st_task.task.duration_minutes,
+                            "priority": st_task.task.priority.name,
+                        }
+                        for st_task in sorted_plan
+                    ]
+                )
+            else:
+                st.info(f"No tasks fit in today's schedule for {pet.name}.")
+
+            if scheduler._skipped:
+                st.warning(
+                    f"Skipped due to insufficient time: "
+                    + ", ".join(task.name for task in scheduler._skipped)
+                )
+
+        st.markdown("#### Conflict Check")
+        any_conflicts = False
+        pet_names = list(schedulers_by_pet_name.keys())
+        for i in range(len(pet_names)):
+            for j in range(i + 1, len(pet_names)):
+                name_a, name_b = pet_names[i], pet_names[j]
+                conflicts = schedulers_by_pet_name[name_a].detect_conflicts(
+                    schedulers_by_pet_name[name_b]._scheduled,
+                    self_label=name_a,
+                    other_label=name_b,
+                )
+                if conflicts:
+                    any_conflicts = True
+                    for warning in conflicts:
+                        st.markdown(f":red[⚠ {warning}]")
+
+        if not any_conflicts and len(pet_names) > 1:
+            st.success("No scheduling conflicts between pets.")

@@ -96,23 +96,71 @@ My overall confidence level for this system is 4.
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Priority sorting | `Scheduler.sort_by_priority()` | Orders tasks high → medium → low priority, breaking ties by shorter duration first. |
+| Chronological sorting | `Scheduler.sort_by_start_time()` | Re-sorts an already-scheduled plan by `start_time` (HH:MM string comparison), independent of priority order. |
+| Time-budget filtering | `Scheduler.filter_by_time_budget()` | Greedily fills the day from `available_minutes`, skipping any task that no longer fits and recording it in `_skipped`. |
+| Start-time assignment | `Scheduler._assign_start_times()` | Stamps each included task with a sequential clock time starting from `day_start_time`, based on cumulative duration. |
+| Conflict detection | `Scheduler.detect_conflicts()` | Compares this plan's scheduled tasks against another pet's scheduled tasks and flags any overlapping `[start, start+duration)` time ranges as warnings. |
+| Recurring tasks | `Task.mark_complete()` | Marks a task complete and, for `frequency="daily"`/`"weekly"` tasks, returns a new `Task` due one day/week later; non-recurring tasks return `None`. |
+| Task filtering/aggregation | `Owner.get_all_tasks()`, `Owner.filter_tasks()` | Flattens tasks across all of an owner's pets, optionally narrowed by completion status and/or pet name. |
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+**Main UI features:**
+- Enter an owner name and add one or more pets (name, age, breed), shown in a live table.
+- Select a pet and add care tasks (title, duration, priority), shown in that pet's task table.
+- Set the available minutes for the day and generate a schedule for every pet at once.
+- View each pet's plan as a table sorted by start time, with success/info/warning banners
+  showing how many tasks were scheduled and which were skipped for lack of time.
+- See a conflict-check section that flags any overlapping tasks between pets in red warning text.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+**Example workflow:**
+1. Enter an owner name (e.g., "Jordan") and add a pet (e.g., "Mochi", age 1, Tabby).
+2. Select Mochi and add a few tasks with different priorities and durations
+   (e.g., "Morning walk" - high, "Grooming" - low).
+3. Set "Available minutes today" (e.g., 60) and click "Generate schedule."
+4. Review Mochi's plan: tasks appear in a table ordered by start time, with any
+   tasks that didn't fit in the time budget called out in a warning.
+5. Add a second pet with an overlapping task time to see the conflict-check
+   section flag the overlap in red.
+
+**Key Scheduler behaviors demonstrated:**
+- **Priority-first ordering**: `sort_by_priority()` puts high-priority tasks first when
+  building the plan, so time-limited days favor what matters most.
+- **Time-budget filtering**: `filter_by_time_budget()` greedily fits tasks into
+  `available_minutes` and tracks anything that didn't fit as skipped.
+- **Chronological sorting**: `sort_by_start_time()` re-orders the generated plan by
+  clock time for display, independent of the priority order used to build it.
+- **Conflict warnings**: `detect_conflicts()` compares two pets' scheduled plans and
+  surfaces any overlapping time ranges as red warning messages in the UI.
+- **Recurring tasks**: `mark_complete()` (exercised in `main.py`) advances a daily/weekly
+  task's due date to generate its next occurrence when completed.
+
+**Fenced code block of sample CLI output from running main.py**
+Daily plan for Buddy (Labrador):
+08:00 — Morning walk (30 min) [priority: high]
+skipped Evening walk — insufficient time remaining
+Reversed, then re-sorted by start_time:
+  08:00 - Morning walk
+-----
+Daily plan for Whiskers (Tabby):
+08:00 — Litter box cleaning (15 min) [priority: high]
+08:15 — Nail trim (20 min) [priority: low]
+Reversed, then re-sorted by start_time:
+  08:00 - Litter box cleaning
+  08:15 - Nail trim
+-----
+Checking for schedule conflicts between Buddy and Whiskers:
+  Conflict: 'Morning walk' (Buddy) overlaps with 'Litter box cleaning' (Whiskers) at 08:00
+  Conflict: 'Morning walk' (Buddy) overlaps with 'Nail trim' (Whiskers) at 08:00
+Completed tasks across all pets:
+  Grooming
+  Feeding
+Incomplete tasks for Buddy only:
+  Evening walk
+  Morning walk
+  Grooming
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->

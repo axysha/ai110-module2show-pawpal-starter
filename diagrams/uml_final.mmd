@@ -1,0 +1,60 @@
+classDiagram
+    class Owner {
+        +str name
+        +List~Pet~ pets
+        +get_all_tasks() List~Task~
+        +filter_tasks(completed: bool, pet_name: str) List~Task~
+    }
+
+    class Pet {
+        +str name
+        +int age
+        +str breed
+        +Owner owner
+        +List~Task~ tasks
+        +add_task(task: Task) None
+    }
+
+    class Task {
+        +str name
+        +int duration_minutes
+        +Priority priority
+        +bool completed
+        +str task_type
+        +str frequency
+        +date due_date
+        +mark_complete() Task
+    }
+
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    class ScheduledTask {
+        +Task task
+        +str start_time
+    }
+
+    class Scheduler {
+        +List~Task~ tasks
+        +int available_minutes
+        +str day_start_time
+        +List~ScheduledTask~ _scheduled
+        +List~Task~ _skipped
+        +generate_plan() List~ScheduledTask~
+        +sort_by_priority() List~Task~
+        +sort_by_start_time() List~ScheduledTask~
+        +filter_by_time_budget() List~Task~
+        +detect_conflicts(other_scheduled: List~ScheduledTask~, self_label: str, other_label: str) List~str~
+        +explain_plan() str
+    }
+
+    Owner "1" *-- "0..*" Pet : has
+    Pet "1" *-- "0..*" Task : has
+    Scheduler "1" --> "0..*" Task : sorts/filters
+    Scheduler "1" *-- "0..*" ScheduledTask : produces
+    ScheduledTask "1" --> "1" Task : wraps
+    Task --> Priority : has
