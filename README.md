@@ -59,19 +59,39 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 ```
 
 ## 🧪 Testing PawPal+
+* test_sort_by_start_time_orders_chronologically — Confirms that a schedule with tasks in scrambled order is returned sorted earliest-to-latest by start time.
+
+* test_sort_by_start_time_empty_schedule_returns_empty_list — Confirms sorting a pet's empty schedule returns [] without error.
+
+* test_sort_by_start_time_tie_keeps_both_tasks_in_original_order — Confirms two tasks at the identical start time both remain in the sorted output, in their original relative order.
 
 ```bash
 # Run the full test suite:
-pytest
+python -m pytest tests/test_pawpal.py -v
 
 # Run with coverage:
-pytest --cov
+pytest tests/test_pawpal.py --cov=pawpal_system
 ```
 
 Sample test output:
 
 ```
 # Paste your pytest output here
+tests/test_pawpal.py::test_mark_complete PASSED                                                                                           [  9%]
+tests/test_pawpal.py::test_add_task_increases_pet_task_count PASSED                                                                       [ 18%]
+tests/test_pawpal.py::test_sort_by_start_time_orders_chronologically PASSED                                                               [ 27%]
+tests/test_pawpal.py::test_sort_by_start_time_empty_schedule_returns_empty_list PASSED                                                    [ 36%]
+tests/test_pawpal.py::test_sort_by_start_time_tie_keeps_both_tasks_in_original_order PASSED                                               [ 45%]
+tests/test_pawpal.py::test_mark_complete_daily_task_creates_next_day_task PASSED                                                          [ 54%]
+tests/test_pawpal.py::test_mark_complete_non_recurring_task_returns_none PASSED                                                           [ 63%]
+tests/test_pawpal.py::test_detect_conflicts_flags_overlapping_times PASSED                                                                [ 72%]
+tests/test_pawpal.py::test_detect_conflicts_flags_duplicate_start_times PASSED                                                            [ 81%]
+tests/test_pawpal.py::test_detect_conflicts_back_to_back_tasks_do_not_conflict PASSED                                                     [ 90%]
+tests/test_pawpal.py::test_detect_conflicts_with_no_tasks_returns_empty_list PASSED                                                       [100%]
+
+============================================================== 11 passed in 0.05s ===============================================================
+
+My overall confidence level for this system is 4. 
 ```
 
 ## 📐 Smarter Scheduling
