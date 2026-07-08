@@ -24,11 +24,13 @@ Yes, I slightly changed my design by avoiding ambiguity in the generate_plan() m
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
+The scheduler really only weighs two constraints, priority and available time. Every task carries a priority level and a duration, and the scheduler leans on priority as the main ordering signal, using duration only as a second reference when two tasks share the same priority. Available time acts as a hard cutoff rather than something the scheduler negotiates around, so once the minutes run out, whatever is left simply gets skipped and reported as such rather than squeezed in. Priority was treated as the constraint that mattered most because the whole point of the app is helping an owner get through the most important thing first when time is limited, so something like a high priority feeding shouldn't lose its spot to a low priority grooming task just because grooming happened to be entered first.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+One trade off is that the scheduler always sorts strictly by priority first and duration second, with no way to pin a task to a specific time of day. That means something like feeding at a fixed hour has no way to stay in-place there, since a higher priority task can always shift everything after it later. This keeps the scheduling logic simple and easy to reason about, but it sacrifices the kind of real world scheduling where certain tasks genuinely need to happen at a particular time rather than just in some order.
 
 ---
 
